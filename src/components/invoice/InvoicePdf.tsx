@@ -27,7 +27,6 @@ import {
   COMPANY_NAME,
   COMPANY_PHONE,
   COMPANY_PHONE_LABEL,
-  FROM_SECTION_LABEL,
   INVOICE_DATE_LABEL,
   INVOICE_NUMBER_LABEL,
   INVOICE_DATE_FORMAT,
@@ -121,9 +120,9 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   companyName: {
-    fontSize: 12,
+    fontSize: 20,
     fontFamily: 'Helvetica-Bold',
-    marginBottom: 3,
+    marginBottom: 6,
   },
   detailLine: {
     marginBottom: 2,
@@ -250,7 +249,6 @@ export function InvoicePdfDocument({
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{FROM_SECTION_LABEL}</Text>
           <Text style={styles.companyName}>{COMPANY_NAME}</Text>
           <Text style={styles.detailLine}>{COMPANY_ADDRESS_LINE_1}</Text>
           <Text style={styles.detailLine}>{COMPANY_ADDRESS_LINE_2}</Text>
