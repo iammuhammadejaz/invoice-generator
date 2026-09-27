@@ -93,6 +93,25 @@ body {
   font-size: var(--placeholder-size);
 }
 
+.invoice-footer {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.invoice-footer-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.invoice-footer-email {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
 .invoice-field-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
