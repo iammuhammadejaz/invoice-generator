@@ -11,12 +11,21 @@ import type { FormInstance } from 'antd'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import {
+  COMPANY_EMAIL,
+  COMPANY_NAME,
   CURRENCIES,
   INVOICE_FORM_DATE_FORMAT,
   INVOICE_STATUSES,
+  INVOICE_TOTAL_LABEL,
   LOGO_PATH,
+  MAX_CUSTOMER_ADDRESS_LENGTH,
+  MAX_CUSTOMER_ADDRESS_LENGTH_MESSAGE,
+  MAX_CUSTOMER_PHONE_LENGTH,
+  MAX_CUSTOMER_PHONE_LENGTH_MESSAGE,
   MAX_ITEM_PRICE,
   MAX_ITEM_PRICE_MESSAGE,
+  MAX_INVOICE_NUMBER_LENGTH,
+  MAX_INVOICE_NUMBER_LENGTH_MESSAGE,
   MAX_NOTE_LENGTH,
   MAX_NOTE_LENGTH_MESSAGE,
   MAX_ITEM_QUANTITY,
@@ -162,40 +171,22 @@ export default function InvoiceForm({
         <h2 className="invoice-section-title">From</h2>
         <div className="invoice-field-grid">
           <Form.Item
-            name="companyName"
-            label="Company name"
-            rules={[{ required: true, message: REQUIRED_FIELD_MESSAGE }]}
-          >
-            <Input size="large" placeholder="Company name" />
-          </Form.Item>
-
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: REQUIRED_FIELD_MESSAGE }]}
-          >
-            <Input size="large" placeholder="Name" />
-          </Form.Item>
-
-          <Form.Item
-            className="invoice-span-2"
-            name="email"
-            label="Email address"
-            rules={[
-              { required: true, message: REQUIRED_FIELD_MESSAGE },
-              { type: 'email', message: VALID_EMAIL_MESSAGE },
-            ]}
-          >
-            <Input size="large" type="email" placeholder="Email address" />
-          </Form.Item>
-
-          <Form.Item
             className="invoice-span-2"
             name="invoiceNumber"
             label="Invoice number"
-            rules={[{ required: true, message: REQUIRED_FIELD_MESSAGE }]}
+            rules={[
+              { required: true, message: REQUIRED_FIELD_MESSAGE },
+              {
+                max: MAX_INVOICE_NUMBER_LENGTH,
+                message: MAX_INVOICE_NUMBER_LENGTH_MESSAGE,
+              },
+            ]}
           >
-            <Input size="large" placeholder="Invoice number" />
+            <Input
+              size="large"
+              maxLength={MAX_INVOICE_NUMBER_LENGTH}
+              placeholder="Invoice number"
+            />
           </Form.Item>
 
           <Form.Item
@@ -255,6 +246,44 @@ export default function InvoiceForm({
               size="large"
               type="email"
               placeholder="Customer email address"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="customerPhone"
+            label="Customer phone number"
+            rules={[
+              { required: true, message: REQUIRED_FIELD_MESSAGE },
+              {
+                max: MAX_CUSTOMER_PHONE_LENGTH,
+                message: MAX_CUSTOMER_PHONE_LENGTH_MESSAGE,
+              },
+            ]}
+          >
+            <Input
+              size="large"
+              type="tel"
+              maxLength={MAX_CUSTOMER_PHONE_LENGTH}
+              placeholder="Customer phone number"
+            />
+          </Form.Item>
+
+          <Form.Item
+            className="invoice-span-2"
+            name="customerAddress"
+            label="Customer address"
+            rules={[
+              { required: true, message: REQUIRED_FIELD_MESSAGE },
+              {
+                max: MAX_CUSTOMER_ADDRESS_LENGTH,
+                message: MAX_CUSTOMER_ADDRESS_LENGTH_MESSAGE,
+              },
+            ]}
+          >
+            <TextArea
+              rows={2}
+              maxLength={MAX_CUSTOMER_ADDRESS_LENGTH}
+              placeholder="Customer address"
             />
           </Form.Item>
         </div>
@@ -452,10 +481,15 @@ export default function InvoiceForm({
           )}
         </div>
         <div className="invoice-total-row invoice-total-row-grand">
-          <strong>Total</strong>
+          <strong>{INVOICE_TOTAL_LABEL}</strong>
           <strong>{formatMoney(total, currency)}</strong>
         </div>
       </div>
+
+      <footer className="invoice-footer">
+        <p className="invoice-footer-name">{COMPANY_NAME}</p>
+        <p className="invoice-footer-email">{COMPANY_EMAIL}</p>
+      </footer>
     </Form>
   )
 }

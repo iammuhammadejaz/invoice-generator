@@ -2,6 +2,7 @@ import { Buffer } from 'buffer'
 import {
   Document,
   Image,
+  Link,
   Page,
   StyleSheet,
   Text,
@@ -14,6 +15,21 @@ if (typeof globalThis.Buffer === 'undefined') {
 }
 import dayjs from 'dayjs'
 import {
+  BILL_TO_ADDRESS_LABEL,
+  BILL_TO_COMPANY_EMAIL_LABEL,
+  BILL_TO_COMPANY_NAME_LABEL,
+  BILL_TO_PHONE_LABEL,
+  BILL_TO_SECTION_LABEL,
+  COMPANY_ADDRESS_LINE_1,
+  COMPANY_ADDRESS_LINE_2,
+  COMPANY_EMAIL,
+  COMPANY_EMAIL_HREF,
+  COMPANY_NAME,
+  COMPANY_PHONE,
+  COMPANY_PHONE_LABEL,
+  FROM_SECTION_LABEL,
+  INVOICE_DATE_LABEL,
+  INVOICE_NUMBER_LABEL,
   INVOICE_DATE_FORMAT,
   INVOICE_THEME_COLOR,
   THANK_YOU_MESSAGE,
@@ -21,6 +37,7 @@ import {
   getInvoiceFileName,
   getInvoiceStatus,
   getInvoiceStatusLabel,
+  getInvoiceTotalLabel,
   getItemAmount,
   getLogoDataUrl,
   getSubtotal,
@@ -32,13 +49,16 @@ import type { InvoiceFormValues } from '../../lib/invoice'
 const INK = '#1F2933'
 const MUTED = '#6B7280'
 const LINE = '#D1D5DB'
+const LINK = '#0F6F76'
 const PRINT_FRAME_READY_DELAY_MS = 500
 const PRINT_DIALOG_BLOCKING_MS = 250
 const PRINT_DIALOG_FOCUS_LISTENER_DELAY_MS = 300
 
 const styles = StyleSheet.create({
   page: {
-    padding: 36,
+    paddingTop: 36,
+    paddingHorizontal: 36,
+    paddingBottom: 72,
     fontSize: 10,
     color: INK,
     fontFamily: 'Helvetica',
@@ -90,36 +110,46 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica-Bold',
     fontSize: 11,
   },
-  seller: {
-    marginBottom: 22,
+  section: {
+    marginBottom: 18,
+  },
+  sectionTitle: {
+    fontSize: 9,
+    fontFamily: 'Helvetica-Bold',
+    letterSpacing: 0.8,
+    color: MUTED,
+    marginBottom: 6,
   },
   companyName: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Helvetica-Bold',
-    marginBottom: 4,
+    marginBottom: 3,
   },
-  muted: {
-    color: MUTED,
+  detailLine: {
     marginBottom: 2,
+    color: MUTED,
   },
-  columns: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 22,
-  },
-  billToLabel: {
+  fieldLabel: {
     fontFamily: 'Helvetica-Bold',
-    marginBottom: 6,
     color: INK,
   },
-  metaLabel: {
-    color: MUTED,
-    width: 70,
+  emailLink: {
+    color: LINK,
+    textDecoration: 'underline',
+    marginTop: 2,
   },
-  metaRow: {
+  billToLine: {
+    marginBottom: 3,
+    color: MUTED,
+  },
+  invoiceDetails: {
     flexDirection: 'row',
-    marginBottom: 4,
-    justifyContent: 'flex-end',
+    gap: 32,
+    marginBottom: 18,
+  },
+  detailLabel: {
+    color: MUTED,
+    marginBottom: 2,
   },
   tableHeader: {
     backgroundColor: INVOICE_THEME_COLOR,
@@ -168,7 +198,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    bottom: 28,
+    bottom: 24,
     left: 36,
     right: 36,
     textAlign: 'center',
@@ -176,6 +206,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica-Oblique',
   },
 })
+
+function BillToField({ label, value }: { label: string; value: string }) {
+  return (
+    <Text style={styles.billToLine}>
+      <Text style={styles.fieldLabel}>{label}: </Text>
+      {value}
+    </Text>
+  )
+}
 
 type InvoicePdfDocumentProps = {
   values: InvoiceFormValues
@@ -210,27 +249,48 @@ export function InvoicePdfDocument({
           </View>
         </View>
 
-        <View style={styles.seller}>
-          <Text style={styles.companyName}>{values.companyName}</Text>
-          <Text style={styles.muted}>{values.name}</Text>
-          <Text style={styles.muted}>{values.email}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{FROM_SECTION_LABEL}</Text>
+          <Text style={styles.companyName}>{COMPANY_NAME}</Text>
+          <Text style={styles.detailLine}>{COMPANY_ADDRESS_LINE_1}</Text>
+          <Text style={styles.detailLine}>{COMPANY_ADDRESS_LINE_2}</Text>
+          <Text style={styles.detailLine}>
+            <Text style={styles.fieldLabel}>{COMPANY_PHONE_LABEL}: </Text>
+            {COMPANY_PHONE}
+          </Text>
+          <Link src={COMPANY_EMAIL_HREF} style={styles.emailLink}>
+            {COMPANY_EMAIL}
+          </Link>
         </View>
 
-        <View style={styles.columns}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{BILL_TO_SECTION_LABEL}</Text>
+          <BillToField
+            label={BILL_TO_COMPANY_NAME_LABEL}
+            value={values.customerName}
+          />
+          <BillToField
+            label={BILL_TO_COMPANY_EMAIL_LABEL}
+            value={values.customerEmail}
+          />
+          <BillToField
+            label={BILL_TO_ADDRESS_LABEL}
+            value={values.customerAddress}
+          />
+          <BillToField
+            label={BILL_TO_PHONE_LABEL}
+            value={values.customerPhone}
+          />
+        </View>
+
+        <View style={styles.invoiceDetails}>
           <View>
-            <Text style={styles.billToLabel}>Bill To:</Text>
-            <Text>{values.customerName}</Text>
-            <Text style={styles.muted}>{values.customerEmail}</Text>
+            <Text style={styles.detailLabel}>{INVOICE_DATE_LABEL}</Text>
+            <Text>{formattedDate}</Text>
           </View>
           <View>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>Date:</Text>
-              <Text>{formattedDate}</Text>
-            </View>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>Invoice #:</Text>
-              <Text>{values.invoiceNumber}</Text>
-            </View>
+            <Text style={styles.detailLabel}>{INVOICE_NUMBER_LABEL}</Text>
+            <Text>{values.invoiceNumber}</Text>
           </View>
         </View>
 
@@ -264,7 +324,7 @@ export function InvoicePdfDocument({
             <Text>{formatMoney(shipping, values.currency)}</Text>
           </View>
           <View style={styles.balanceRow}>
-            <Text>Balance Due</Text>
+            <Text>{getInvoiceTotalLabel(status)}</Text>
             <Text>{formatMoney(total, values.currency)}</Text>
           </View>
         </View>

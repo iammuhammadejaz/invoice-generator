@@ -1,8 +1,11 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { App as AntApp, ConfigProvider } from 'antd'
 
+import { COMPANY_NAME, LOGO_PATH } from '../lib/invoice'
 import appCss from '../styles.css?url'
 import 'antd/dist/reset.css'
+
+const PAGE_DESCRIPTION = `Create and download invoices for ${COMPANY_NAME}.`
 
 const CTA_COLOR = '#B6DFE3'
 const CTA_HOVER_COLOR = '#9fd0d5'
@@ -30,10 +33,39 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Invoice Generator',
+        title: COMPANY_NAME,
+      },
+      {
+        name: 'description',
+        content: PAGE_DESCRIPTION,
+      },
+      {
+        name: 'application-name',
+        content: COMPANY_NAME,
+      },
+      {
+        property: 'og:title',
+        content: COMPANY_NAME,
+      },
+      {
+        property: 'og:description',
+        content: PAGE_DESCRIPTION,
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:image',
+        content: LOGO_PATH,
       },
     ],
     links: [
+      {
+        rel: 'icon',
+        href: LOGO_PATH,
+        type: 'image/svg+xml',
+      },
       {
         rel: 'preconnect',
         href: 'https://fonts.googleapis.com',
