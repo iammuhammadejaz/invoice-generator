@@ -34,7 +34,6 @@ export const COMPANY_PHONE_LABEL = 'Phone'
 export const COMPANY_PHONE = '+1 (812) 645 5579'
 export const COMPANY_EMAIL = 'sales@patchmakers.us'
 export const COMPANY_EMAIL_HREF = `mailto:${COMPANY_EMAIL}`
-export const FROM_SECTION_LABEL = 'From'
 export const BILL_TO_SECTION_LABEL = 'Bill To'
 export const INVOICE_DATE_LABEL = 'Date'
 export const INVOICE_NUMBER_LABEL = 'Invoice #'
